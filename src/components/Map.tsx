@@ -1,14 +1,33 @@
 import { geoPath } from 'd3-geo';
 import debounce from 'lodash.debounce';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { BASE_MAP_OPTIONS, PROJECTIONS, PROJECTION_TYPE_CONIC } from '../consts';
-import { AppContext } from '../AppContext';
-import Legend from './Legend';
+import { useAppSelector } from '../hooks';
+import { featureColorArrSelector } from '../store/mapSelectors';
 import Download from './Download';
+import Legend from './Legend';
 
-function Map() {
-  const { baseMap, featureColorArr, mapData, projection, mapLoading } = useContext(AppContext);
+const useMapProps = () => {
+  const baseMap = useAppSelector(state => state.map.baseMap);
+  const mapData = useAppSelector(state => state.map.mapData);
+  const mapLoading = useAppSelector(state => state.map.mapLoading);
+  const projection = useAppSelector(state => state.map.projection);
+
+  const featureColorArr = useAppSelector(featureColorArrSelector);
+
+  return {
+    baseMap,
+    featureColorArr,
+    mapData,
+    mapLoading,
+    projection,
+  };
+};
+
+const Map = () => {
+  const { baseMap, featureColorArr, mapData, projection, mapLoading } = useMapProps();
+
   const [mapWidth, setMapWidth] = useState(0);
   const mapHeight = mapWidth * 0.5;
 
@@ -84,6 +103,6 @@ function Map() {
       )}
     </div>
   );
-}
+};
 
 export default Map;

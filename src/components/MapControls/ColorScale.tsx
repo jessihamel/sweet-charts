@@ -1,6 +1,3 @@
-import { useContext } from 'react';
-import { Label, MoreInfo, SELECT_CLASS } from './Shared';
-import { AppContext } from '../../AppContext';
 import {
   COLOR_INTERPOLATION_OPTIONS,
   COLOR_SCALE_OPTIONS,
@@ -8,10 +5,33 @@ import {
   ColorScale,
   SCALE_TYPE_LINEAR,
 } from '../../consts';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { MapState, setColorInterpolation, setColorScale } from '../../store/mapSlice';
+import { Label, MoreInfo, SELECT_CLASS } from './Shared';
 
-function ColorScaleSelector() {
-  const { colorInterpolation, colorScale, setColorInterpolation, setColorScale } =
-    useContext(AppContext);
+const useColorScaleProps = () => {
+  const dispatch = useAppDispatch();
+  const dispatchSetColorScale = (colorScale: MapState['colorScale']) => {
+    dispatch(setColorScale(colorScale));
+  };
+  const dispatchSetColorInterpolation = (colorInterplation: MapState['colorInterpolation']) => {
+    dispatch(setColorInterpolation(colorInterplation));
+  };
+
+  const colorScale = useAppSelector(state => state.map.colorScale);
+  const colorInterpolation = useAppSelector(state => state.map.colorInterpolation);
+
+  return {
+    colorInterpolation,
+    colorScale,
+    setColorInterpolation: dispatchSetColorInterpolation,
+    setColorScale: dispatchSetColorScale,
+  };
+};
+
+const ColorScaleSelector = () => {
+  const { colorInterpolation, colorScale, setColorScale, setColorInterpolation } =
+    useColorScaleProps();
 
   return (
     <>
@@ -55,6 +75,6 @@ function ColorScaleSelector() {
       )}
     </>
   );
-}
+};
 
 export default ColorScaleSelector;

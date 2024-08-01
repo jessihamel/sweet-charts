@@ -1,11 +1,10 @@
-import { useContext } from 'react';
 import ColorScaleSelector from './ColorScale';
 import Colors from './Colors';
 import MapSelector from './MapSelector';
 import ProjectionSelector from './ProjectionSelector';
-import { AppContext } from '../../AppContext';
 import LegendStyles from './LegendStyles';
 import Data from './Data';
+import DomainSelector from './Domain';
 
 const spacerClass = 'w-full h-[1px] bg-slate-200';
 
@@ -22,6 +21,8 @@ function MapControls() {
           <ColorScaleSelector />
           <div className={spacerClass}></div>
           <Data />
+          <div className={spacerClass}></div>
+          <DomainSelector />
           <div className={spacerClass}></div>
           <LegendStyles />
           <div className={spacerClass}></div>

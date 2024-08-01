@@ -1,8 +1,10 @@
-import { useContext, useEffect, useRef, useState } from 'react';
-import { AppContext } from '../../AppContext';
-import { Button, Label } from './Shared';
+import { useEffect, useRef, useState } from 'react';
 import { SketchPicker } from 'react-color';
+
 import { COLOR_SCALE_OPTIONS, SCALE_TYPE_LINEAR } from '../../consts';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { MapState, setColors } from '../../store/mapSlice';
+import { Button, Label } from './Shared';
 
 const DEFAULT_COLOR = '#000000';
 
@@ -11,8 +13,24 @@ const DEFAULT_EDITING_COLOR = {
   i: null,
 };
 
-function Colors() {
-  const { colors, colorScale, setColors } = useContext(AppContext);
+const useColorsProps = () => {
+  const dispatch = useAppDispatch();
+  const dispatchSetColors = (colors: MapState['colors']) => {
+    dispatch(setColors(colors));
+  };
+
+  const colors = useAppSelector(state => state.map.colors);
+  const colorScale = useAppSelector(state => state.map.colorScale);
+
+  return {
+    colors,
+    colorScale,
+    setColors: dispatchSetColors,
+  };
+};
+
+const Colors = () => {
+  const { colors, colorScale, setColors } = useColorsProps();
 
   const [pickerColor, setPickerColor] = useState(DEFAULT_COLOR);
 
@@ -163,6 +181,6 @@ function Colors() {
       </div>
     </div>
   );
-}
+};
 
 export default Colors;

@@ -1,10 +1,54 @@
-import { useContext } from 'react';
+import { useEffect } from 'react';
 import { Label, MoreInfo, SELECT_CLASS } from './Shared';
-import { AppContext } from '../../AppContext';
 import { BASE_MAP_OPTIONS } from '../../consts';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { MapState, setBaseMap, setMapData, setMapLoading } from '../../store/mapSlice';
+import { FeatureCollection } from 'geojson';
 
-function MapSelector() {
-  const { baseMap, setBaseMap } = useContext(AppContext);
+const useMapSelectorProps = () => {
+  const dispatch = useAppDispatch();
+  const dispatchSetBaseMap = (baseMap: MapState['baseMap']) => {
+    dispatch(setBaseMap(baseMap));
+  };
+  const dispatchSetMapData = (mapData: MapState['mapData']) => {
+    dispatch(setMapData(mapData));
+  };
+  const dispatchSetMapLoading = (mapLoading: MapState['mapLoading']) => {
+    dispatch(setMapLoading(mapLoading));
+  };
+
+  const baseMap = useAppSelector(state => state.map.baseMap);
+  const mapLoading = useAppSelector(state => state.map.mapLoading);
+
+  return {
+    baseMap,
+    mapLoading,
+    setBaseMap: dispatchSetBaseMap,
+    setMapData: dispatchSetMapData,
+    setMapLoading: dispatchSetMapLoading,
+  };
+};
+
+const MapSelector = () => {
+  const { baseMap, setBaseMap, setMapData, setMapLoading } = useMapSelectorProps();
+
+  // TODO: Move to THUNK?
+  useEffect(() => {
+    console.log('FETCH');
+    const fetchMapData = async () => {
+      try {
+        setMapLoading(true);
+        const response = await fetch(`${process.env.PUBLIC_URL}/maps/${baseMap}.json`);
+        const data = (await response.json()) as FeatureCollection;
+        setMapData(data);
+        setMapLoading(false);
+      } catch (error) {
+        setMapLoading(false);
+      }
+    };
+    fetchMapData();
+  }, [baseMap]);
+
   return (
     <div>
       <Label>Select Base Map</Label>
@@ -25,6 +69,6 @@ function MapSelector() {
       </div>
     </div>
   );
-}
+};
 
 export default MapSelector;

@@ -1,11 +1,43 @@
-import { useContext } from 'react';
+import { scaleLinear, scaleQuantize } from 'd3-scale';
+import { format } from 'd3-format';
 
 import { COLOR_SCALE_OPTIONS, SCALE_TYPE_DISCRETE, SCALE_TYPE_LINEAR } from '../consts';
-import { AppContext } from '../AppContext';
-import { scaleLinear, scaleQuantize } from 'd3-scale';
+import { useAppDispatch, useAppSelector } from '../hooks';
+import { colorScaleFnSelector } from '../store/mapSelectors';
 
-function Legend({ mapHeight }: { mapHeight: number }) {
-  const { colorScale, colorScaleFn, legendUnits } = useContext(AppContext);
+import { MapState, setLegendFormatError } from '../store/mapSlice';
+
+const useLegendProps = () => {
+  const dispatch = useAppDispatch();
+  const colorScale = useAppSelector(state => state.map.colorScale);
+  const colorScaleFn = useAppSelector(colorScaleFnSelector);
+  const legendFormat = useAppSelector(state => state.map.legendFormat);
+  const legendFormatError = useAppSelector(state => state.map.legendFormatError);
+  const legendUnits = useAppSelector(state => state.map.legendUnits);
+
+  const dispatchSetLegendFormatError = (legendFormatError: MapState['legendFormatError']) => {
+    dispatch(setLegendFormatError(legendFormatError));
+  };
+
+  return {
+    colorScale,
+    colorScaleFn,
+    legendFormatError,
+    legendFormat,
+    legendUnits,
+    setLegendFormatError: dispatchSetLegendFormatError,
+  };
+};
+
+const Legend = ({ mapHeight }: { mapHeight: number }) => {
+  const {
+    colorScale,
+    colorScaleFn,
+    legendFormat,
+    legendFormatError,
+    legendUnits,
+    setLegendFormatError,
+  } = useLegendProps();
 
   const legendPadding = mapHeight * 0.02;
 
@@ -20,18 +52,33 @@ function Legend({ mapHeight }: { mapHeight: number }) {
       (colorScaleFn.range().length - 2) * rectPadding +
       legendPadding * 2;
     const legendY = mapHeight - fullLegendHeight;
+
     return (
       <g id="legend" transform={`translate(${legendPadding},${legendY})`}>
         {colorScaleFn.range().map((color, i) => {
+          let f0, f1;
+          try {
+            const formatFn = legendFormat ? format(legendFormat) : v => v;
+            f0 = formatFn(scaleValues[i]);
+            f1 = formatFn(scaleValues[i + 1]);
+            if (legendFormatError) {
+              setLegendFormatError(false);
+            }
+          } catch (error) {
+            f0 = scaleValues[i];
+            f1 = scaleValues[i + 1];
+            setLegendFormatError(true);
+          }
+
           const translateY = i * (rectWidth + rectPadding);
-          const text = `${scaleValues[i]}${legendUnits} – ${scaleValues[i + 1]}${legendUnits}`;
+          const text = `${f0}${legendUnits} – ${f1}${legendUnits}`;
           return (
-            <g key={color} transform={`translate(0,${translateY})`}>
+            <g key={`${i} - ${color}`} transform={`translate(0,${translateY})`}>
               <rect width={rectWidth} height={rectWidth} fill={color} />
               <text
                 x={rectWidth + legendPadding}
                 y={rectWidth * 0.75}
-                fontFamily='"Ubuntu Mono", mono'
+                fontFamily='"Ubuntu Mono", monospace'
                 fontSize={`${fontSize}px`}
               >
                 {text}
@@ -78,25 +125,38 @@ function Legend({ mapHeight }: { mapHeight: number }) {
         </defs>
         <g transform={`translate(${legendPadding},${mapHeight - scaleHeight - legendPadding})`}>
           <rect height={scaleHeight} width={scaleWidth} fill="url(#grad1)" />
-          {numbers.map(number => (
-            <g key={number} transform={`translate(${scaleWidth},${numberYScale(number) + 1})`}>
-              <line x1={0} x2={legendPadding * 0.4} stroke={'black'} />
-              <text
-                x={legendPadding}
-                y={fontSize * 0.3}
-                fontFamily='"Ubuntu Mono", mono'
-                fontSize={`${fontSize}px`}
-              >
-                {number}
-                {legendUnits}
-              </text>
-            </g>
-          ))}
+          {numbers.map(number => {
+            let f0;
+            try {
+              const formatFn = legendFormat ? format(legendFormat) : v => v;
+              f0 = formatFn(number);
+              if (legendFormatError) {
+                setLegendFormatError(false);
+              }
+            } catch (error) {
+              f0 = number;
+              setLegendFormatError(true);
+            }
+            return (
+              <g key={number} transform={`translate(${scaleWidth},${numberYScale(number) + 1})`}>
+                <line x1={0} x2={legendPadding * 0.4} stroke={'black'} />
+                <text
+                  x={legendPadding}
+                  y={fontSize * 0.3}
+                  fontFamily='"Ubuntu Mono", mono'
+                  fontSize={`${fontSize}px`}
+                >
+                  {f0}
+                  {legendUnits}
+                </text>
+              </g>
+            );
+          })}
         </g>
       </>
     );
   }
   return null;
-}
+};
 
 export default Legend;

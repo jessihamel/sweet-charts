@@ -1,13 +1,44 @@
 import debounce from 'lodash.debounce';
-import { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { AppContext } from '../../AppContext';
 import { BASE_MAP_OPTIONS } from '../../consts';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { MapState, setDataInput, setDataKey, setDataMode } from '../../store/mapSlice';
 import { Label, SELECT_CLASS } from './Shared';
 
-function Data() {
+const useDataProps = () => {
+  const dispatch = useAppDispatch();
+  const dispatchSetDataInput = (dataInput: MapState['dataInput']) => {
+    dispatch(setDataInput(dataInput));
+  };
+  const dispatchSetDataKey = (dataKey: MapState['dataKey']) => {
+    dispatch(setDataKey(dataKey));
+  };
+  const dispatchSetDataMode = (dataMode: MapState['dataMode']) => {
+    dispatch(setDataMode(dataMode));
+  };
+
+  const baseMap = useAppSelector(state => state.map.baseMap);
+  const dataInput = useAppSelector(state => state.map.dataInput);
+  const dataKey = useAppSelector(state => state.map.dataKey);
+  const dataMode = useAppSelector(state => state.map.dataMode);
+  const mapData = useAppSelector(state => state.map.mapData);
+
+  return {
+    baseMap,
+    dataInput,
+    dataKey,
+    dataMode,
+    mapData,
+    setDataInput: dispatchSetDataInput,
+    setDataKey: dispatchSetDataKey,
+    setDataMode: dispatchSetDataMode,
+  };
+};
+
+const Data = () => {
   const { baseMap, dataInput, dataKey, dataMode, mapData, setDataInput, setDataKey, setDataMode } =
-    useContext(AppContext);
+    useDataProps();
 
   const [textAreaInput, setTextAreaInput] = useState(dataInput);
 
@@ -22,6 +53,7 @@ function Data() {
     [setDataInput]
   );
 
+  // TODO: Would be better if all this lived in redux
   const resetCsvData = useCallback(() => {
     if (!mapData?.features || !dataKey) {
       return;
@@ -36,7 +68,7 @@ function Data() {
     const csv = uniq.map(v => [v, 0].join(',')).join('\n');
     setDataInput(csv);
     setTextAreaInput(csv);
-  }, [dataKey, mapData, setDataInput]);
+  }, [dataKey, mapData]);
 
   useEffect(() => {
     resetCsvData();
@@ -123,6 +155,6 @@ function Data() {
       )}
     </>
   );
-}
+};
 
 export default Data;

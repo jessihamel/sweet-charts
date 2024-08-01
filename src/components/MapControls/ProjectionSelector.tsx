@@ -1,10 +1,26 @@
-import { useContext } from 'react';
-import { Label, MoreInfo, SELECT_CLASS } from './Shared';
-import { AppContext } from '../../AppContext';
 import { BASE_MAP_OPTIONS, PROJECTIONS, Projection } from '../../consts';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { MapState, setProjection } from '../../store/mapSlice';
+import { Label, MoreInfo, SELECT_CLASS } from './Shared';
 
-function ProjectionSelector() {
-  const { baseMap, projection, setProjection } = useContext(AppContext);
+const useProjectionSelectorProps = () => {
+  const dispatch = useAppDispatch();
+  const dispatchSetProjection = (projection: MapState['projection']) => {
+    dispatch(setProjection(projection));
+  };
+
+  const baseMap = useAppSelector(state => state.map.baseMap);
+  const projection = useAppSelector(state => state.map.projection);
+
+  return {
+    baseMap,
+    projection,
+    setProjection: dispatchSetProjection,
+  };
+};
+
+const ProjectionSelector = () => {
+  const { baseMap, projection, setProjection } = useProjectionSelectorProps();
 
   const PROJECTION_OPTIONS = BASE_MAP_OPTIONS[baseMap].projectionOptions;
   return (
@@ -27,6 +43,6 @@ function ProjectionSelector() {
       </div>
     </div>
   );
-}
+};
 
 export default ProjectionSelector;
