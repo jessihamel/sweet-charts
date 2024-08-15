@@ -30,6 +30,9 @@ const Map = () => {
 
   const [mapWidth, setMapWidth] = useState(0);
   const mapHeight = mapWidth * 0.5;
+  const padding = 0.05;
+  const innerWidth = mapWidth * (1 - padding);
+  const innerHeight = mapHeight * (1 - padding);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<SVGAElement>(null);
@@ -64,7 +67,7 @@ const Map = () => {
   }
 
   if (mapData) {
-    projectionFn.fitSize([mapWidth, mapHeight], mapData);
+    projectionFn.fitSize([innerWidth, innerHeight], mapData);
   }
 
   const path = geoPath().projection(projectionFn);
@@ -87,15 +90,19 @@ const Map = () => {
                 width: mapWidth + 'px',
               }}
             >
-              {mapData.features.map((featureData, i) => (
-                <path
-                  d={path(featureData)}
-                  fill={featureColorArr[i] || 'none'}
-                  key={`${baseMap}-${i}`}
-                  stroke="black"
-                />
-              ))}
-              <Legend mapHeight={mapHeight} />
+              <g transform={`translate(${(mapWidth * padding) / 2},${(mapWidth * padding) / 2})`}>
+                <g id="map-layer">
+                  {mapData.features.map((featureData, i) => (
+                    <path
+                      d={path(featureData)}
+                      fill={featureColorArr[i] || 'none'}
+                      key={`${baseMap}-${i}`}
+                      stroke="black"
+                    />
+                  ))}
+                </g>
+                <Legend mapHeight={innerHeight} />
+              </g>
             </svg>
           </div>
           <Download mapSvg={mapRef.current} />

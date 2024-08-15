@@ -87,7 +87,7 @@ const Colors = () => {
                           const newColors = [...colors];
                           newColors[i] = color.hex;
                           setColors(newColors);
-                          setPickerColor(DEFAULT_COLOR);
+                          setPickerColor(color.hex);
                         }}
                         presetColors={[]}
                       />

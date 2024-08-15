@@ -35,7 +35,7 @@ const initialBaseMap = Object.keys(BASE_MAP_OPTIONS)[0];
 const initialState: MapState = {
   baseMap: initialBaseMap,
   colorInterpolation: INTERPOLATE_RGB,
-  colors: ['#d1c4e9', '#9575cd', '#673ab7', '#512da8', '#311b92'],
+  colors: ['#d7e1e8', '#b0c5d2', '#88a8bc', '#608da6', '#327391'],
   colorScale: COLOR_SCALE_QUANTIZE,
   dataDomain: [0, 1],
   dataInput: '',

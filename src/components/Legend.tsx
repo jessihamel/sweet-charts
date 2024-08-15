@@ -54,7 +54,7 @@ const Legend = ({ mapHeight }: { mapHeight: number }) => {
     const legendY = mapHeight - fullLegendHeight;
 
     return (
-      <g id="legend" transform={`translate(${legendPadding},${legendY})`}>
+      <g id="legend" transform={`translate(0,${legendY})`}>
         {colorScaleFn.range().map((color, i) => {
           let f0, f1;
           try {
@@ -73,7 +73,7 @@ const Legend = ({ mapHeight }: { mapHeight: number }) => {
           const translateY = i * (rectWidth + rectPadding);
           const text = `${f0}${legendUnits} – ${f1}${legendUnits}`;
           return (
-            <g key={`${i} - ${color}`} transform={`translate(0,${translateY})`}>
+            <g key={`${i}-${color}`} transform={`translate(0,${translateY})`}>
               <rect width={rectWidth} height={rectWidth} fill={color} />
               <text
                 x={rectWidth + legendPadding}
@@ -119,13 +119,13 @@ const Legend = ({ mapHeight }: { mapHeight: number }) => {
               const color = colorScaleFn(b);
               const step = 100 / (stops.length - 1);
               const offset = step * i;
-              return <stop key={color} offset={offset + '%'} stopColor={color} />;
+              return <stop key={`${i}-${color}`} offset={offset + '%'} stopColor={color} />;
             })}
           </linearGradient>
         </defs>
-        <g transform={`translate(${legendPadding},${mapHeight - scaleHeight - legendPadding})`}>
+        <g id="legend-layer" transform={`translate(0,${mapHeight - scaleHeight - legendPadding})`}>
           <rect height={scaleHeight} width={scaleWidth} fill="url(#grad1)" />
-          {numbers.map(number => {
+          {numbers.map((number, i) => {
             let f0;
             try {
               const formatFn = legendFormat ? format(legendFormat) : v => v;
@@ -138,12 +138,15 @@ const Legend = ({ mapHeight }: { mapHeight: number }) => {
               setLegendFormatError(true);
             }
             return (
-              <g key={number} transform={`translate(${scaleWidth},${numberYScale(number) + 1})`}>
+              <g
+                key={`${i}-${number}`}
+                transform={`translate(${scaleWidth},${numberYScale(number) + 1})`}
+              >
                 <line x1={0} x2={legendPadding * 0.4} stroke={'black'} />
                 <text
                   x={legendPadding}
                   y={fontSize * 0.3}
-                  fontFamily='"Ubuntu Mono", mono'
+                  fontFamily='"Ubuntu Mono", monospace'
                   fontSize={`${fontSize}px`}
                 >
                   {f0}

@@ -22,6 +22,7 @@
     "d3-geo-projection": "^4.0.0",
     "d3-interpolate": "^3.0.1",
     "d3-scale": "^4.0.2",
+    "d3-scale-chromatic": "^3.1.0",
     "lodash.debounce": "^4.0.8",
     "react": "^18.2.0",
     "react-color": "^2.19.3",
@@ -61,5 +62,6 @@
     "@types/lodash.debounce": "^4.0.9",
     "@types/react-color": "^3.0.12",
     "tailwindcss": "^3.4.3"
-  }
+  },
+  "homepage": "http://www.jessihamel.com/choropleth-editor"
 }
