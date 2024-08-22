@@ -33,7 +33,7 @@ const LegendStyles = () => {
         </Label>
         <div className="ml-4 mt-4">
           <input
-            className="border border-slate-800 rounded-sm w-16 px-1 text-right"
+            className="w-16 rounded-sm border border-brand px-1 text-right"
             onChange={e => setLegendUnits(e.target.value)}
             value={legendUnits}
             type="text"
@@ -46,7 +46,7 @@ const LegendStyles = () => {
         </Label>
         <div className="ml-4 mt-4">
           <input
-            className="border border-slate-800 rounded-sm w-16 px-1 text-right"
+            className="w-16 rounded-sm border border-brand px-1 text-right"
             onChange={e => setLegendFormat(e.target.value)}
             value={legendFormat}
             type="text"

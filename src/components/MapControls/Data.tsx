@@ -50,7 +50,7 @@ const Data = () => {
         leading: true,
         trailing: true,
       }),
-    [setDataInput]
+    [setDataInput],
   );
 
   // TODO: Would be better if all this lived in redux
@@ -125,12 +125,12 @@ const Data = () => {
             <Label>Edit CSV Data</Label>
             <div className="ml-4">
               <textarea
-                className="px-2 py-1 mt-4 mb-2 rounded-sm border border-slate-500 w-full max-w-96 min-h-48"
+                className="mb-2 mt-4 min-h-48 w-full max-w-96 rounded-sm border border-slate-500 px-2 py-1"
                 onChange={e => setTextAreaInput(e.target.value)}
                 value={textAreaInput}
               />
               <button
-                className="flex items-center text-sm gap-1 px-2 py-1 border border-gray-300 rounded-md hover:bg-slate-100"
+                className="flex items-center gap-1 rounded-md border border-gray-300 px-2 py-1 text-sm text-brand hover:bg-slate-100"
                 onClick={handleReset}
               >
                 <svg
@@ -139,7 +139,7 @@ const Data = () => {
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   stroke="currentColor"
-                  className="w-5 h-5"
+                  className="h-5 w-5"
                 >
                   <path
                     strokeLinecap="round"

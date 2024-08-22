@@ -32,14 +32,17 @@ export const featureDataSelector = createSelector(
     if (dataInput) {
       const parsed = dataInput.split('\n').map(row => row.split(','));
 
-      parsedInput = parsed.reduce((acc, rowArr) => {
-        acc[rowArr[0]] = +rowArr[1];
-        return acc;
-      }, {} as Record<string, number>);
+      parsedInput = parsed.reduce(
+        (acc, rowArr) => {
+          acc[rowArr[0]] = +rowArr[1];
+          return acc;
+        },
+        {} as Record<string, number>,
+      );
     }
 
     return mapData.features.map(f => parsedInput[f.properties![dataKey!]]);
-  }
+  },
 );
 
 export const colorScaleFnSelector = createSelector(
@@ -58,7 +61,7 @@ export const colorScaleFnSelector = createSelector(
 
     if (COLOR_SCALE_OPTIONS[colorScale].type === SCALE_TYPE_LINEAR) {
       (scaleFn as ScaleLinear<string, string>).interpolate(
-        COLOR_INTERPOLATION_OPTIONS[colorInterpolation].fn
+        COLOR_INTERPOLATION_OPTIONS[colorInterpolation].fn,
       );
       colorRange = [colors[0], colors[colors.length - 1]];
     }
@@ -69,12 +72,12 @@ export const colorScaleFnSelector = createSelector(
     scaleFn.range(colorRange);
 
     return scaleFn;
-  }
+  },
 );
 
 export const featureColorArrSelector = createSelector(
   [colorScaleFnSelector, featureDataSelector],
   (colorScaleFn, featureData) => {
     return featureData.map(colorScaleFn) as string[];
-  }
+  },
 );

@@ -48,9 +48,9 @@ const DomainSelector = () => {
         {domainType === DOMAIN_TYPE_MANUAL && (
           <div>
             <Label>Domain Min/Max</Label>
-            <div className="flex gap-6 ml-4 mt-2">
+            <div className="ml-4 mt-2 flex gap-6">
               <div className="flex flex-col gap-1">
-                <div className="font-light uppercase text-sm">Min</div>
+                <div className="text-sm font-light uppercase">Min</div>
                 <input
                   className={NUMERIC_INPUT_CLASS}
                   onChange={event => setDomain([+event.target.value, domain[1]])}
@@ -60,7 +60,7 @@ const DomainSelector = () => {
               </div>
 
               <div className="flex flex-col gap-1">
-                <div className="font-light uppercase text-sm">Max</div>
+                <div className="text-sm font-light uppercase">Max</div>
                 <input
                   className={NUMERIC_INPUT_CLASS}
                   onChange={event => setDomain([domain[0], +event.target.value])}

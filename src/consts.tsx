@@ -383,7 +383,7 @@ export const BASE_MAP_OPTIONS = {
   ...Object.entries(STATE_FIPS)
     .sort((a, b) => +a[0] - +b[0])
     .reduce((a, [fips, state]) => {
-      const fileName = `us/states/cb_2023_us_county_5m_${state}_${fips}`;
+      const fileName = `us/states/cb_2023_us_county_5m_${state.toLowerCase()}_${fips}`;
       a[fileName] = {
         dataKeys: ['NAME', 'COUNTYFP'],
         defaultProjection: ALBERS_USA,

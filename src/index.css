@@ -17,3 +17,9 @@ code {
 .sketch-picker {
   box-shadow: none !important;
 }
+
+@layer base {
+  a {
+    @apply text-brand underline decoration-dashed underline-offset-[3px] decoration-brand;
+  }
+}

@@ -10,8 +10,8 @@ const spacerClass = 'w-full h-[1px] bg-slate-200';
 
 function MapControls() {
   return (
-    <div className="md:relative controls w-full md:w-1/3 border-r border-slate-200 stretch">
-      <div className="md:absolute h-full overflow-y-scroll p-4">
+    <div className="controls stretch w-full border-r border-slate-200 md:relative md:w-1/3">
+      <div className="h-full overflow-y-scroll p-4 md:absolute">
         <div className="flex flex-col gap-6">
           <div className={`${spacerClass} visible md:hidden`}></div>
           <MapSelector />

@@ -73,9 +73,9 @@ const Map = () => {
   const path = geoPath().projection(projectionFn);
 
   return (
-    <div className="relative grow mx-4 flex flex-col gap-8" ref={wrapperRef}>
+    <div className="relative mx-4 flex grow flex-col gap-8" ref={wrapperRef}>
       {mapLoading && (
-        <div className="absolute flex items-center w-full h-full justify-center">
+        <div className="absolute flex h-full w-full items-center justify-center">
           <div>Loading...</div>
         </div>
       )}
