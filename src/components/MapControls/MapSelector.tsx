@@ -32,9 +32,7 @@ const useMapSelectorProps = () => {
 const MapSelector = () => {
   const { baseMap, setBaseMap, setMapData, setMapLoading } = useMapSelectorProps();
 
-  // TODO: Move to THUNK?
   useEffect(() => {
-    console.log('FETCH');
     const fetchMapData = async () => {
       try {
         setMapLoading(true);

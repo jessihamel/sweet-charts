@@ -31,11 +31,11 @@ const Map = () => {
   const [mapWidth, setMapWidth] = useState(0);
   const mapHeight = mapWidth * 0.5;
   const padding = 0.05;
-  const innerWidth = mapWidth * (1 - padding);
-  const innerHeight = mapHeight * (1 - padding);
+  const innerWidth = mapWidth * (1 - padding * 2);
+  const innerHeight = mapHeight * (1 - padding * 2);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<SVGAElement>(null);
+  const mapRef = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
     function _measure() {
