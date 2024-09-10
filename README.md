@@ -2,7 +2,7 @@
 
 An app to create choropleth maps in the browser and export them in multiple formats. Try it [here](https://jessihamel.com/choropleth-editor/).
 
-![screenshot](https://raw.githubusercontent.com/jessihamel/sweet-charts/main/public/editor-preview.png)
+[<img src="https://raw.githubusercontent.com/jessihamel/sweet-charts/main/public/editor-preview.png">](https://jessihamel.com/choropleth-editor/)
 
 ## Features
 
