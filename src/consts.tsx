@@ -4,8 +4,10 @@ import {
   geoConicConformal,
   geoConicEqualArea,
   geoEquirectangular,
+  geoIdentity,
   geoMercator,
   geoNaturalEarth1,
+  geoTransform,
 } from 'd3-geo';
 import { interpolateHsl, interpolateLab, interpolateRgb } from 'd3-interpolate';
 import { scaleLinear, scaleQuantize } from 'd3-scale';
@@ -17,6 +19,7 @@ export const MERCATOR = 'MERCATOR';
 export const NATURAL_EARTH = 'NATURAL_EARTH';
 export const LAMBERT_CONFORMAL_CONIC = 'LAMBERT_CONFORMAL_CONIC';
 export const ALBERS_EQUAL_AREA_CONIC = ' ALBERS_EQUAL_AREA_CONIC';
+export const TILEGRAM_PROJECTION = 'TILEGRAM_PROJECTION';
 
 export type Projection =
   // | typeof ALBERS
@@ -25,7 +28,8 @@ export type Projection =
   | typeof MERCATOR
   | typeof NATURAL_EARTH
   | typeof LAMBERT_CONFORMAL_CONIC
-  | typeof ALBERS_EQUAL_AREA_CONIC;
+  | typeof ALBERS_EQUAL_AREA_CONIC
+  | typeof TILEGRAM_PROJECTION;
 
 export const PROJECTION_TYPE_WORLD_ONLY = 'world';
 export const PROJECTION_TYPE_CONIC = 'conic';
@@ -134,6 +138,13 @@ export const PROJECTIONS = {
       </>
     ),
     type: PROJECTION_TYPE_CONIC,
+  },
+  [TILEGRAM_PROJECTION]: {
+    conic: false,
+    fn: () => geoIdentity().reflectY(true),
+    gloabl: 'false',
+    label: 'Tilegram Custom Projection',
+    moreInfo: <></>,
   },
 };
 
@@ -380,30 +391,47 @@ export const BASE_MAP_OPTIONS = {
     ),
     projectionOptions: US_PROJECTION_OPTIONS,
   },
+  'us/states_tilegram': {
+    dataKeys: ['name'],
+    defaultProjection: TILEGRAM_PROJECTION,
+    label: 'US - States - 1:1 Tilegram',
+    moreInfo: (
+      <>
+        Simple US States cartogram from{' '}
+        <a href="https://pitchinteractiveinc.github.io/tilegrams/" target="_blank" rel="noreferrer">
+          Tilegrams
+        </a>
+      </>
+    ),
+    projectionOptions: [TILEGRAM_PROJECTION],
+  },
   ...Object.entries(STATE_FIPS)
     .sort((a, b) => +a[0] - +b[0])
-    .reduce((a, [fips, state]) => {
-      const fileName = `us/states/cb_2023_us_county_5m_${state.toLowerCase()}_${fips}`;
-      a[fileName] = {
-        dataKeys: ['NAME', 'COUNTYFP'],
-        defaultProjection: ALBERS_USA,
-        label: `US - ${state} - County - US Census 2023 Cartographic Boundary - 1 : 5,000,000`,
-        moreInfo: (
-          <>
-            County map from{' '}
-            <a
-              href="https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html"
-              target="_blank"
-              rel="noreferrer"
-            >
-              US Census Cartographic Boundary Files 2023
-            </a>
-          </>
-        ),
-        projectionOptions: US_PROJECTION_OPTIONS,
-      } as BaseMapOption;
-      return a;
-    }, {} as Record<string, BaseMapOption>),
+    .reduce(
+      (a, [fips, state]) => {
+        const fileName = `us/states/cb_2023_us_county_5m_${state.toLowerCase()}_${fips}`;
+        a[fileName] = {
+          dataKeys: ['NAME', 'COUNTYFP'],
+          defaultProjection: ALBERS_USA,
+          label: `US - ${state} - County - US Census 2023 Cartographic Boundary - 1 : 5,000,000`,
+          moreInfo: (
+            <>
+              County map from{' '}
+              <a
+                href="https://www.census.gov/geographies/mapping-files/time-series/geo/cartographic-boundary.html"
+                target="_blank"
+                rel="noreferrer"
+              >
+                US Census Cartographic Boundary Files 2023
+              </a>
+            </>
+          ),
+          projectionOptions: US_PROJECTION_OPTIONS,
+        } as BaseMapOption;
+        return a;
+      },
+      {} as Record<string, BaseMapOption>,
+    ),
 } as Record<string, BaseMapOption>;
 
 export const COLOR_SCALE_QUANTIZE = 'COLOR_SCALE_QUANTIZE';
