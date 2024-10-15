@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { SketchPicker } from 'react-color';
 
-import { COLOR_SCALE_OPTIONS, SCALE_TYPE_LINEAR } from '../../consts';
+import { COLOR_PALETTE_OPTIONS, COLOR_SCALE_OPTIONS, SCALE_TYPE_LINEAR } from '../../consts/colors';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { MapState, setColors } from '../../store/mapSlice';
-import { Button, Label } from './Shared';
+import { MapState, setColorMode, setColorPalette, setColors } from '../../store/mapSlice';
+import { Button, Label, SELECT_CLASS } from './Shared';
 
 const DEFAULT_COLOR = '#000000';
 
@@ -15,21 +15,33 @@ const DEFAULT_EDITING_COLOR = {
 
 const useColorsProps = () => {
   const dispatch = useAppDispatch();
+  const dispatchSetColorMode = (colorMode: MapState['colorMode']) => {
+    dispatch(setColorMode(colorMode));
+  };
+  const dispatchSetColorPalette = (palette: MapState['colorPalette']) => {
+    dispatch(setColorPalette(palette));
+  };
   const dispatchSetColors = (colors: MapState['colors']) => {
     dispatch(setColors(colors));
   };
 
+  const colorMode = useAppSelector(state => state.map.colorMode);
+  const colorPalette = useAppSelector(state => state.map.colorPalette);
   const colors = useAppSelector(state => state.map.colors);
   const colorScale = useAppSelector(state => state.map.colorScale);
 
   return {
+    colorMode,
+    colorPalette,
     colors,
     colorScale,
+    setColorMode: dispatchSetColorMode,
+    setColorPalette: dispatchSetColorPalette,
     setColors: dispatchSetColors,
   };
 };
 
-const Colors = () => {
+const CustomColors = () => {
   const { colors, colorScale, setColors } = useColorsProps();
 
   const [pickerColor, setPickerColor] = useState(DEFAULT_COLOR);
@@ -52,7 +64,6 @@ const Colors = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, [pickerRef]);
-
   return (
     <div>
       <Label>Select Colors</Label>
@@ -161,9 +172,62 @@ const Colors = () => {
           );
         })}
       </div>
-      <div className="mt-2">
+      <div className="ml-3 mt-2">
         <Button onClick={() => setColors([...colors, '#000000'])}>Add color</Button>
       </div>
+    </div>
+  );
+};
+
+const PaletteColors = () => {
+  const { colorPalette, setColorPalette } = useColorsProps();
+  return (
+    <div>
+      <Label>Select Palette</Label>
+      <div className="ml-4 flex flex-col gap-3">
+        <select
+          id="palette-options"
+          className={SELECT_CLASS}
+          onChange={event => setColorPalette(event.target.value as MapState['colorPalette'])}
+          value={colorPalette}
+        >
+          {Object.entries(COLOR_PALETTE_OPTIONS).map(([k, v]) => (
+            <option className="" key={k} value={k}>
+              {v.label}
+            </option>
+          ))}
+        </select>
+      </div>
+    </div>
+  );
+};
+
+const Colors = () => {
+  const { colorMode, setColorMode } = useColorsProps();
+
+  return (
+    <div className="flex flex-col gap-1">
+      <div>
+        <Label>Select Color Mode</Label>
+        <div className="mb-4 ml-4">
+          <select
+            id="dataMode"
+            className={SELECT_CLASS}
+            onChange={event => setColorMode(event.target.value as 'CUSTOM' | 'PALETTE')}
+            value={colorMode}
+          >
+            {[
+              ['CUSTOM', 'Custom'],
+              ['PALETTE', 'Palette'],
+            ].map(([key, label]) => (
+              <option className="" key={key} value={key}>
+                {label}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+      {colorMode === 'CUSTOM' ? <CustomColors /> : <PaletteColors />}
     </div>
   );
 };

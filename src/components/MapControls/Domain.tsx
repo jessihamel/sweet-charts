@@ -1,4 +1,4 @@
-import { DOMAIN_TYPE_MANUAL, DOMAIN_TYPE_OPTIONS } from '../../consts';
+import { DOMAIN_TYPE_MANUAL, DOMAIN_TYPE_OPTIONS } from '../../consts/domains';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { MapState, setDomain, setDomainType } from '../../store/mapSlice';
 import { Label, MoreInfo, NUMERIC_INPUT_CLASS, SELECT_CLASS } from './Shared';

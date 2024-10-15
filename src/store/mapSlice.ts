@@ -1,20 +1,21 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { FeatureCollection } from 'geojson';
-
 import {
-  BASE_MAP_OPTIONS,
   COLOR_SCALE_QUANTIZE,
   ColorInterpolation,
+  ColorPaletteKey,
   ColorScale,
-  DOMAIN_TYPE_MANUAL,
-  DOMAIN_TYPE_OPTIONS,
   INTERPOLATE_RGB,
-  Projection,
-} from '../consts';
+} from '../consts/colors';
+import { DOMAIN_TYPE_MANUAL, DOMAIN_TYPE_OPTIONS } from '../consts/domains';
+import { BASE_MAP_OPTIONS, Projection } from '../consts/projections';
 
 export interface MapState {
   baseMap: string;
+  colorBuckets: number;
   colorInterpolation: ColorInterpolation;
+  colorMode: 'CUSTOM' | 'PALETTE';
+  colorPalette: ColorPaletteKey;
   colors: string[];
   colorScale: ColorScale;
   dataDomain: number[];
@@ -34,7 +35,10 @@ const initialBaseMap = Object.keys(BASE_MAP_OPTIONS)[0];
 
 const initialState: MapState = {
   baseMap: initialBaseMap,
+  colorBuckets: 5,
   colorInterpolation: INTERPOLATE_RGB,
+  colorMode: 'CUSTOM',
+  colorPalette: 'BLUES',
   colors: ['#d7e1e8', '#b0c5d2', '#88a8bc', '#608da6', '#327391'],
   colorScale: COLOR_SCALE_QUANTIZE,
   dataDomain: [0, 1],
@@ -59,8 +63,20 @@ export const mapSlice = createSlice({
       state.baseMap = baseMap;
       state.projection = BASE_MAP_OPTIONS[baseMap].defaultProjection;
     },
+    setColorBuckets: (state, action) => {
+      const bucketsRaw = action.payload;
+      const bucketsRound = Math.round(bucketsRaw);
+      const clampedValue = Math.min(20, Math.max(1, bucketsRound));
+      state.colorBuckets = clampedValue;
+    },
     setColorInterpolation: (state, action) => {
       state.colorInterpolation = action.payload;
+    },
+    setColorMode: (state, action) => {
+      state.colorMode = action.payload;
+    },
+    setColorPalette: (state, action) => {
+      state.colorPalette = action.payload;
     },
     setColors: (state, action) => {
       state.colors = action.payload;
@@ -108,7 +124,10 @@ export const mapSlice = createSlice({
 // Action creators are generated for each case reducer function
 export const {
   setBaseMap,
+  setColorBuckets,
   setColorInterpolation,
+  setColorMode,
+  setColorPalette,
   setColors,
   setColorScale,
   setDataInput,

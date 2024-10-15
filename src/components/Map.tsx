@@ -2,7 +2,7 @@ import { geoPath } from 'd3-geo';
 import debounce from 'lodash.debounce';
 import { useEffect, useRef, useState } from 'react';
 
-import { BASE_MAP_OPTIONS, PROJECTIONS, PROJECTION_TYPE_CONIC } from '../consts';
+import { BASE_MAP_OPTIONS, PROJECTIONS, PROJECTION_TYPE_CONIC } from '../consts/projections';
 import { useAppSelector } from '../hooks';
 import { featureColorArrSelector } from '../store/mapSelectors';
 import Download from './Download';
@@ -94,7 +94,7 @@ const Map = () => {
                 <g id="map-layer">
                   {mapData.features.map((featureData, i) => (
                     <path
-                      d={path(featureData)}
+                      d={path(featureData) || ''}
                       fill={featureColorArr[i] || 'none'}
                       key={`${baseMap}-${i}`}
                       stroke="black"

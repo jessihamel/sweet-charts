@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Label, MoreInfo, SELECT_CLASS } from './Shared';
-import { BASE_MAP_OPTIONS } from '../../consts';
+import { BASE_MAP_OPTIONS } from '../../consts/projections';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { MapState, setBaseMap, setMapData, setMapLoading } from '../../store/mapSlice';
 import { FeatureCollection } from 'geojson';

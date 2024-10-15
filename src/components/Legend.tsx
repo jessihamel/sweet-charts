@@ -1,14 +1,20 @@
 import { scaleLinear, scaleQuantize } from 'd3-scale';
 import { format } from 'd3-format';
 
-import { COLOR_SCALE_OPTIONS, SCALE_TYPE_DISCRETE, SCALE_TYPE_LINEAR } from '../consts';
+import {
+  COLOR_PALETTE_OPTIONS,
+  COLOR_SCALE_OPTIONS,
+  SCALE_TYPE_DISCRETE,
+  SCALE_TYPE_LINEAR,
+} from '../consts/colors';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { colorScaleFnSelector } from '../store/mapSelectors';
-
 import { MapState, setLegendFormatError } from '../store/mapSlice';
 
 const useLegendProps = () => {
   const dispatch = useAppDispatch();
+  const colorMode = useAppSelector(state => state.map.colorMode);
+  const colorPalette = useAppSelector(state => state.map.colorPalette);
   const colorScale = useAppSelector(state => state.map.colorScale);
   const colorScaleFn = useAppSelector(colorScaleFnSelector);
   const legendFormat = useAppSelector(state => state.map.legendFormat);
@@ -20,6 +26,8 @@ const useLegendProps = () => {
   };
 
   return {
+    colorMode,
+    colorPalette,
     colorScale,
     colorScaleFn,
     legendFormatError,
@@ -31,6 +39,8 @@ const useLegendProps = () => {
 
 const Legend = ({ mapHeight }: { mapHeight: number }) => {
   const {
+    colorMode,
+    colorPalette,
     colorScale,
     colorScaleFn,
     legendFormat,
@@ -94,7 +104,11 @@ const Legend = ({ mapHeight }: { mapHeight: number }) => {
     const scaleWidth = mapHeight * 0.05;
     const fontSize = Math.round(scaleWidth * 0.75);
 
-    const domain = colorScaleFn.domain();
+    let domain = colorScaleFn.domain();
+
+    if (colorMode === 'PALETTE' && COLOR_PALETTE_OPTIONS[colorPalette].reverse) {
+      domain = domain.map(d => d).reverse();
+    }
 
     const stopScale = scaleQuantize()
       .domain(domain)
@@ -111,6 +125,7 @@ const Legend = ({ mapHeight }: { mapHeight: number }) => {
     const numberYScale = scaleLinear()
       .domain(domain)
       .range([scaleHeight - 2, 0]);
+
     return (
       <>
         <defs>

@@ -1,4 +1,3 @@
-import { ReactNode } from 'react';
 import {
   geoAlbersUsa,
   geoConicConformal,
@@ -7,10 +6,8 @@ import {
   geoIdentity,
   geoMercator,
   geoNaturalEarth1,
-  geoTransform,
 } from 'd3-geo';
-import { interpolateHsl, interpolateLab, interpolateRgb } from 'd3-interpolate';
-import { scaleLinear, scaleQuantize } from 'd3-scale';
+import { ReactNode } from 'react';
 
 export const ALBERS = 'ALBERS';
 export const ALBERS_USA = 'ALBERS_USA';
@@ -22,7 +19,6 @@ export const ALBERS_EQUAL_AREA_CONIC = ' ALBERS_EQUAL_AREA_CONIC';
 export const TILEGRAM_PROJECTION = 'TILEGRAM_PROJECTION';
 
 export type Projection =
-  // | typeof ALBERS
   | typeof ALBERS_USA
   | typeof EQUIRECTANGULAR
   | typeof MERCATOR
@@ -37,7 +33,6 @@ export const PROJECTION_TYPE_CYLINDRICAL = 'cylindrical';
 export const PROJECTION_TYPE_US_ONLY = 'us';
 
 export const PROJECTIONS = {
-  // [ALBERS]: { fn: geoAlbers, label: 'Albers', type: PROJECTION_TYPE_US_ONLY },
   [ALBERS_USA]: {
     fn: geoAlbersUsa,
     label: 'Albers USA',
@@ -145,6 +140,7 @@ export const PROJECTIONS = {
     gloabl: 'false',
     label: 'Tilegram Custom Projection',
     moreInfo: <></>,
+    type: null,
   },
 };
 
@@ -157,11 +153,11 @@ const CYLINDRICAL_PROJECTION_OPTIONS = Object.entries(PROJECTIONS)
   .map(([k]) => k);
 
 const CONIC_PROJECTION_OPTIONS = Object.entries(PROJECTIONS)
-  .filter(([_, v]) => v.type == PROJECTION_TYPE_CONIC)
+  .filter(([_, v]) => v.type === PROJECTION_TYPE_CONIC)
   .map(([k]) => k);
 
 const US_ONLY_PROJECTION_OPTIONS = Object.entries(PROJECTIONS)
-  .filter(([_, v]) => v.type == PROJECTION_TYPE_US_ONLY)
+  .filter(([_, v]) => v.type === PROJECTION_TYPE_US_ONLY)
   .map(([k]) => k);
 
 const US_PROJECTION_OPTIONS = [...US_ONLY_PROJECTION_OPTIONS, ...CYLINDRICAL_PROJECTION_OPTIONS];
@@ -433,106 +429,3 @@ export const BASE_MAP_OPTIONS = {
       {} as Record<string, BaseMapOption>,
     ),
 } as Record<string, BaseMapOption>;
-
-export const COLOR_SCALE_QUANTIZE = 'COLOR_SCALE_QUANTIZE';
-export const COLOR_SCALE_LINEAR = 'COLOR_SCALE_LINEAR';
-
-export const SCALE_TYPE_LINEAR = 'SCALE_TYPE_LINEAR';
-export const SCALE_TYPE_DISCRETE = 'SCALE_TYPE_DISCRETE';
-
-export type ColorScale = typeof COLOR_SCALE_QUANTIZE | typeof COLOR_SCALE_LINEAR;
-
-export const COLOR_SCALE_OPTIONS = {
-  [COLOR_SCALE_QUANTIZE]: {
-    fn: scaleQuantize,
-    label: 'Quantize',
-    moreInfo: (
-      <>
-        <a href="https://d3js.org/d3-scale/quantize#scaleQuantize" target="_blank" rel="noreferrer">
-          Quantize scales
-        </a>{' '}
-        map data values to discrete values in the color scale. The input domain is divided uniformly
-        into buckets based on the number of colors selected.
-      </>
-    ),
-    type: SCALE_TYPE_DISCRETE,
-  },
-  [COLOR_SCALE_LINEAR]: {
-    fn: scaleLinear,
-    label: 'Linear',
-    moreInfo: (
-      <>
-        <a href="https://d3js.org/d3-scale/linear" target="_blank" rel="noreferrer">
-          Linear scales
-        </a>{' '}
-        map data values linearly between <b>two values</b> in the color scale.
-      </>
-    ),
-    type: SCALE_TYPE_LINEAR,
-  },
-};
-
-export const INTERPOLATE_RGB = 'INTERPOLATE_RGB';
-export const INTERPOLATE_HSL = 'INTERPOLATE_HSL';
-export const INTERPOLATE_LAB = 'INTERPOLATE_LAB';
-
-export type ColorInterpolation =
-  | typeof INTERPOLATE_RGB
-  | typeof INTERPOLATE_HSL
-  | typeof INTERPOLATE_LAB;
-
-export const COLOR_INTERPOLATION_OPTIONS = {
-  [INTERPOLATE_RGB]: {
-    label: 'Inerpolate RGB',
-    fn: interpolateRgb,
-    moreInfo: (
-      <a
-        href="https://d3js.org/d3-interpolate/color#interpolateRgb"
-        target="_blank"
-        rel="noreferrer"
-      >
-        interpolateRgb
-      </a>
-    ),
-  },
-  [INTERPOLATE_HSL]: {
-    label: 'Inerpolate HSL',
-    fn: interpolateHsl,
-    moreInfo: (
-      <a
-        href="https://d3js.org/d3-interpolate/color#interpolateHsl"
-        target="_blank"
-        rel="noreferrer"
-      >
-        interpolateHsl
-      </a>
-    ),
-  },
-  [INTERPOLATE_LAB]: {
-    label: 'Inerpolate LAB',
-    fn: interpolateLab,
-    moreInfo: (
-      <a
-        href="https://d3js.org/d3-interpolate/color#interpolateLab"
-        target="_blank"
-        rel="noreferrer"
-      >
-        interpolateLab
-      </a>
-    ),
-  },
-};
-
-export const DOMAIN_TYPE_EXTENT = 'DOMAIN_TYPE_EXTENT';
-export const DOMAIN_TYPE_MANUAL = 'DOMAIN_TYPE_MANUAL';
-
-export const DOMAIN_TYPE_OPTIONS = {
-  [DOMAIN_TYPE_EXTENT]: {
-    label: 'Data extent',
-    moreInfo: 'The colors are assigned based on the min and max of the data',
-  },
-  [DOMAIN_TYPE_MANUAL]: {
-    label: 'Manual',
-    moreInfo: 'Manually set the min and the max of the dataset',
-  },
-};

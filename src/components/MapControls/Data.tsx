@@ -1,7 +1,7 @@
 import debounce from 'lodash.debounce';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { BASE_MAP_OPTIONS } from '../../consts';
+import { BASE_MAP_OPTIONS } from '../../consts/projections';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { MapState, setDataInput, setDataKey, setDataMode } from '../../store/mapSlice';
 import { Label, SELECT_CLASS } from './Shared';

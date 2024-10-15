@@ -1,4 +1,4 @@
-import { BASE_MAP_OPTIONS, PROJECTIONS, Projection } from '../../consts';
+import { BASE_MAP_OPTIONS, PROJECTIONS, Projection } from '../../consts/projections';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { MapState, setProjection } from '../../store/mapSlice';
 import { Label, MoreInfo, SELECT_CLASS } from './Shared';

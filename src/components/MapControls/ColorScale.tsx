@@ -3,14 +3,23 @@ import {
   COLOR_SCALE_OPTIONS,
   ColorInterpolation,
   ColorScale,
+  SCALE_TYPE_DISCRETE,
   SCALE_TYPE_LINEAR,
-} from '../../consts';
+} from '../../consts/colors';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { MapState, setColorInterpolation, setColorScale } from '../../store/mapSlice';
-import { Label, MoreInfo, SELECT_CLASS } from './Shared';
+import {
+  MapState,
+  setColorBuckets,
+  setColorInterpolation,
+  setColorScale,
+} from '../../store/mapSlice';
+import { Label, MoreInfo, NUMERIC_INPUT_CLASS, SELECT_CLASS } from './Shared';
 
 const useColorScaleProps = () => {
   const dispatch = useAppDispatch();
+  const dispatchSetColorBuckets = (colorBuckets: MapState['colorBuckets']) => {
+    dispatch(setColorBuckets(colorBuckets));
+  };
   const dispatchSetColorScale = (colorScale: MapState['colorScale']) => {
     dispatch(setColorScale(colorScale));
   };
@@ -18,20 +27,32 @@ const useColorScaleProps = () => {
     dispatch(setColorInterpolation(colorInterplation));
   };
 
+  const colorBuckets = useAppSelector(state => state.map.colorBuckets);
+  const colorMode = useAppSelector(state => state.map.colorMode);
   const colorScale = useAppSelector(state => state.map.colorScale);
   const colorInterpolation = useAppSelector(state => state.map.colorInterpolation);
 
   return {
+    colorBuckets,
     colorInterpolation,
+    colorMode,
     colorScale,
+    setColorBuckets: dispatchSetColorBuckets,
     setColorInterpolation: dispatchSetColorInterpolation,
     setColorScale: dispatchSetColorScale,
   };
 };
 
 const ColorScaleSelector = () => {
-  const { colorInterpolation, colorScale, setColorScale, setColorInterpolation } =
-    useColorScaleProps();
+  const {
+    colorBuckets,
+    colorInterpolation,
+    colorMode,
+    colorScale,
+    setColorBuckets,
+    setColorScale,
+    setColorInterpolation,
+  } = useColorScaleProps();
 
   return (
     <>
@@ -53,7 +74,20 @@ const ColorScaleSelector = () => {
           <MoreInfo>{COLOR_SCALE_OPTIONS[colorScale].moreInfo}</MoreInfo>
         </div>
       </div>
-      {COLOR_SCALE_OPTIONS[colorScale].type === SCALE_TYPE_LINEAR && (
+      {COLOR_SCALE_OPTIONS[colorScale].type === SCALE_TYPE_DISCRETE && colorMode === 'PALETTE' && (
+        <div>
+          <Label>Number of Buckets</Label>
+          <div className="ml-4 mt-2">
+            <input
+              className={NUMERIC_INPUT_CLASS}
+              onChange={event => setColorBuckets(+event.target.value)}
+              type="number"
+              value={colorBuckets}
+            />
+          </div>
+        </div>
+      )}
+      {COLOR_SCALE_OPTIONS[colorScale].type === SCALE_TYPE_LINEAR && colorMode === 'CUSTOM' && (
         <div>
           <Label>Select Color Interpolation</Label>
           <div className="ml-4">
